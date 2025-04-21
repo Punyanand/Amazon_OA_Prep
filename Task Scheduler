@@ -1,0 +1,31 @@
+class Solution(object):
+    def leastInterval(self, tasks, n):
+        """
+        :type tasks: List[str]
+        :type n: int
+        :rtype: int
+        """
+        if n == 0:
+          return len(tasks)
+
+        task_counts = Counter(tasks)
+        max_heap = [-cnt for cnt in task_counts.values()]  # max heap
+        heapq.heapify(max_heap)
+
+        time = 0
+        cooldown = deque()  # stores (time_to_be_ready, -count)
+
+        while max_heap or cooldown:
+          time += 1
+
+        # Step 1: Check if any task is ready from cooldown
+          if cooldown and cooldown[0][0] == time:
+            heapq.heappush(max_heap, cooldown.popleft()[1])
+
+        # Step 2: Run task with highest frequency
+          if max_heap:
+            count = heapq.heappop(max_heap)
+            if count + 1 < 0:  # still more instances to schedule
+                cooldown.append((time + n + 1, count + 1))  # push to cooldown queue
+
+        return time
